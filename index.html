@@ -5,44 +5,52 @@
     <title>Ultimate Manager Pro</title>
     <style>
         body { font-family: sans-serif; background: #0f172a; color: white; text-align: center; }
-        .container { display: flex; flex-direction: column; align-items: center; }
-        .card { background: #1e293b; padding: 15px; border-radius: 10px; margin: 10px; width: 90%; }
-        .market { height: 300px; overflow-y: scroll; border: 2px solid #334155; padding: 10px; }
-        button { width: 95%; padding: 10px; margin: 5px; cursor: pointer; border-radius: 5px; border: none; }
+        .card { background: #1e293b; padding: 15px; border-radius: 10px; margin: 10px; }
+        .market { height: 350px; overflow-y: scroll; border: 2px solid #334155; padding: 10px; }
+        button { width: 95%; padding: 12px; margin: 5px; cursor: pointer; border-radius: 5px; border: none; font-weight: bold; }
+        .buy-btn { background: #ef4444; color: white; }
+        .action-btn { background: #f59e0b; color: black; }
     </style>
 </head>
 <body>
-    <h1>⚽ Ultimate Manager Pro</h1>
+    <h1>⚽ Ultimate Manager</h1>
     <div class="card">
-        <h2 id="money">Бюджет: 1000$</h2>
-        <p id="stats">З/П: 0$ | Доход: 0$</p>
+        <h2 id="money">Бюджет: 500$</h2>
+        <p id="stats" style="color: #fb7185;">З/П: 0$ | Доход: 0$</p>
     </div>
-    <button onclick="match()" style="background: #3b82f6; color: white; font-weight: bold;">Сыграть матч (+200$)</button>
 
-    <h3>Трансферный рынок (всего 50 игроков):</h3>
+    <button class="action-btn" onclick="pay('Платная тренировка', 150)">Тренировка (-150$)</button>
+    <button class="action-btn" onclick="pay('Перелет', 500)">Чартер (-500$)</button>
+    <button onclick="match()" style="background: #3b82f6; color: white;">Сыграть матч (+300$)</button>
+
+    <h3>Рынок (Жесткие зарплаты):</h3>
     <div id="market" class="market"></div>
 
     <script>
-        let money = 1000;
+        let money = 500;
         let incomePerSec = 0;
         let salaryPerSec = 0;
-
-        // Генерируем 50 игроков автоматически
-        const players = [];
-        for (let i = 1; i <= 50; i++) {
-            players.push({
-                name: `Игрок #${i}`,
-                cost: 500 + (i * 100),
-                inc: 10 + (i * 5),
-                sal: 2 + i
-            });
-        }
+        const names = ["Mbappe", "Haaland", "Bellingham", "Vinicius", "Salah", "De Bruyne", "Kane", "Neymar", "Griezmann", "Foden", "Rodri", "Saka", "Dias", "Courtois", "Son", "Osimhen", "Bruno", "Bernardo", "Lautaro", "Kimmich", "Pedri", "Gavi", "Musiala", "Wirtz", "Rice", "Saliba", "Maignan", "Donnarumma", "Hakimi", "Theo", "Davies", "Kounde", "Araujo", "Alisson", "Ederson", "Ruben", "Guimaraes", "Isak", "Watkins", "Bowen", "Toney", "Maddison", "Mac Allister", "Szoboszlai", "Diaby", "Openda", "Simons", "Malo", "Caicedo", "Enzo"];
 
         const marketDiv = document.getElementById("market");
+        const players = names.map((name, i) => ({
+            name: name,
+            cost: 400 + (i * 250),
+            inc: 20 + (i * 40),
+            // Зарплата теперь агрессивная: чем выше игрок в топе, тем больше % от дохода он забирает
+            sal: 15 + (i * 35) 
+        }));
+
         players.forEach((p, index) => {
-            marketDiv.innerHTML += `<button onclick="buyPlayer(${index})" style="background:#ef4444; color:white;">
-                ${p.name} (${p.cost}$): +${p.inc}$/сек (З/П ${p.sal}$)</button>`;
+            marketDiv.innerHTML += `<button class="buy-btn" onclick="buyPlayer(${index})">
+                ${p.name} (${p.cost}$): +${p.inc}$/сек | З/П ${p.sal}$/сек</button>`;
         });
+
+        function pay(reason, amount) {
+            if (money >= amount) {
+                money -= amount;
+            } else { alert("Нет денег на " + reason); }
+        }
 
         function buyPlayer(index) {
             let p = players[index];
@@ -50,17 +58,18 @@
                 money -= p.cost;
                 incomePerSec += p.inc;
                 salaryPerSec += p.sal;
+                alert(`Подписан ${p.name}!`);
             } else { alert("Недостаточно денег!"); }
         }
 
         setInterval(() => {
             money += (incomePerSec - salaryPerSec);
-            if (money <= 0) { alert("Банкротство!"); location.reload(); }
+            if (money <= 0) { alert("Банкротство! Клуб закрыт."); location.reload(); }
             document.getElementById("money").innerHTML = `Бюджет: ${Math.floor(money)}$`;
             document.getElementById("stats").innerHTML = `З/П: ${salaryPerSec}$/сек | Доход: ${incomePerSec}$/сек`;
         }, 1000);
 
-        function match() { money += 200; }
+        function match() { money += 300; }
     </script>
 </body>
 </html>
