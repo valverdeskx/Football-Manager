@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Хардкорный Менеджер</title>
+    <style>
+        body { font-family: 'Arial', sans-serif; text-align: center; background: #0b1a0e; color: white; }
+        .card { background: #1b4332; padding: 20px; border-radius: 15px; margin: 10px auto; width: 80%; max-width: 400px; }
+        button { padding: 15px; margin: 5px; font-size: 16px; border-radius: 10px; border: none; cursor: pointer; width: 90%; }
+        #money { color: #52b788; }
+    </style>
+</head>
+<body>
+    <h1>⚽ Hardcore Manager</h1>
+    <div class="card">
+        <h2 id="money">Бюджет: 100$</h2>
+        <p id="fans">Болельщики: 10</p>
+        <p>Расходы: -2$ в сек</p>
+    </div>
+
+    <button onclick="train()" style="background: #40916c;">Тренировка (+5 фанатов)</button>
+    <button onclick="match()" style="background: #2d6a4f;">Сыграть матч (+50$)</button>
+
+    <script>
+        let money = 100;
+        let fans = 10;
+
+        // Основной цикл игры (происходит раз в секунду)
+        setInterval(() => {
+            // Расходы на содержание клуба
+            money -= 2; 
+            
+            // Если фанатов больше 0, они приносят доход от билетов
+            money += Math.floor(fans / 10);
+            
+            if (money <= 0) {
+                money = 0;
+                alert("Банкротство! Клуб закрыт.");
+                location.reload(); // Перезапуск игры
+            }
+            updateUI();
+        }, 1000);
+
+        function train() {
+            fans += 5;
+            updateUI();
+        }
+
+        function match() {
+            money += 50;
+            updateUI();
+        }
+
+        function updateUI() {
+            document.getElementById("money").innerHTML = `Бюджет: ${money}$`;
+            document.getElementById("fans").innerHTML = `Болельщики: ${fans}`;
+        }
+    </script>
+</body>
+</html>
