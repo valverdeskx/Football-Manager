@@ -3,58 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Хардкорный Менеджер</title>
+    <title>Football Manager Pro</title>
     <style>
-        body { font-family: 'Arial', sans-serif; text-align: center; background: #0b1a0e; color: white; }
-        .card { background: #1b4332; padding: 20px; border-radius: 15px; margin: 10px auto; width: 80%; max-width: 400px; }
-        button { padding: 15px; margin: 5px; font-size: 16px; border-radius: 10px; border: none; cursor: pointer; width: 90%; }
-        #money { color: #52b788; }
+        body { font-family: 'Arial', sans-serif; text-align: center; background: #081c15; color: white; }
+        .card { background: #1b4332; padding: 15px; border-radius: 15px; margin: 10px auto; width: 90%; }
+        button { padding: 12px; margin: 5px; font-size: 14px; border-radius: 8px; border: none; cursor: pointer; color: white; width: 90%; }
     </style>
 </head>
 <body>
-    <h1>⚽ Hardcore Manager</h1>
+    <h1>⚽ Football Manager Pro</h1>
     <div class="card">
-        <h2 id="money">Бюджет: 100$</h2>
+        <h2 id="money">Бюджет: 200$</h2>
         <p id="fans">Болельщики: 10</p>
-        <p>Расходы: -2$ в сек</p>
+        <p id="income">Пассивный доход: 0$ в сек</p>
     </div>
 
-    <button onclick="train()" style="background: #40916c;">Тренировка (+5 фанатов)</button>
-    <button onclick="match()" style="background: #2d6a4f;">Сыграть матч (+50$)</button>
+    <button onclick="match()" style="background: #2d6a4f;">Сыграть матч (+40$)</button>
+    
+    <div class="card">
+        <h3>🛒 Трансферный рынок:</h3>
+        <button onclick="buyPlayer(1, 100, 5)" style="background: #40916c;">Новичок (100$): +5$/сек</button>
+        <button onclick="buyPlayer(2, 500, 25)" style="background: #52b788;">Звезда (500$): +25$/сек</button>
+        <button onclick="buyPlayer(3, 2000, 100)" style="background: #74c69d;">Легенда (2000$): +100$/сек</button>
+    </div>
 
     <script>
-        let money = 100;
+        let money = 200;
         let fans = 10;
+        let passiveIncome = 0;
 
-        // Основной цикл игры (происходит раз в секунду)
         setInterval(() => {
-            // Расходы на содержание клуба
-            money -= 2; 
-            
-            // Если фанатов больше 0, они приносят доход от билетов
-            money += Math.floor(fans / 10);
+            let expenses = 5 + Math.floor(fans / 5);
+            money += passiveIncome; // Добавляем доход от игроков
+            money -= expenses;      // Вычитаем расходы
             
             if (money <= 0) {
-                money = 0;
                 alert("Банкротство! Клуб закрыт.");
-                location.reload(); // Перезапуск игры
+                location.reload();
             }
-            updateUI();
+            updateUI(expenses);
         }, 1000);
 
-        function train() {
-            fans += 5;
-            updateUI();
-        }
-
         function match() {
-            money += 50;
-            updateUI();
+            money += 40;
+            updateUI(5 + Math.floor(fans / 5));
         }
 
-        function updateUI() {
+        function buyPlayer(id, cost, income) {
+            if (money >= cost) {
+                money -= cost;
+                passiveIncome += income;
+                fans += 20; // Игроки привлекают фанатов
+                alert("Трансфер успешен!");
+            } else {
+                alert("Недостаточно средств!");
+            }
+        }
+
+        function updateUI(exp) {
             document.getElementById("money").innerHTML = `Бюджет: ${money}$`;
             document.getElementById("fans").innerHTML = `Болельщики: ${fans}`;
+            document.getElementById("income").innerHTML = `Пассивный доход: ${passiveIncome}$ в сек`;
         }
     </script>
 </body>
